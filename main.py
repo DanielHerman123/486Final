@@ -10,3 +10,17 @@ reddit = praw.Reddit(
     user_agent='your_user_agent'
 )
 
+#total number of posts in the liberal and conservative categories (change to command line arguement later, potentially)
+NUM_POSTS = 1000
+#location of training data
+TRAINING_DATA = "/trainingData/"
+
+
+def main():
+    #loop through
+    
+    """Main Function.""""
+
+
+if __name__ == '__main__':
+    main()
