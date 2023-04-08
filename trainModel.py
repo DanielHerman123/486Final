@@ -79,3 +79,7 @@ logits = outputs.logits
 # [1] -> center
 # [2] -> right
 print(logits)
+
+
+# https://huggingface.co/bucketresearch/politicalBiasBERT
+# https://huggingface.co/docs/transformers/training
