@@ -19,7 +19,7 @@ TRAINING_DATA = "/trainingData/"
 def main():
     #loop through
     
-    """Main Function.""""
+    """Main Function."""
 
 
 if __name__ == '__main__':
