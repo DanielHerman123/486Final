@@ -4,7 +4,7 @@ from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 
 # Load the CSV file into a pandas DataFrame
-df = pd.read_csv('training_data.csv')
+df = pd.read_csv('trainingData/training_data.csv')
 
 # Extract the text data and labels from the DataFrame
 texts = df['text'].tolist()
