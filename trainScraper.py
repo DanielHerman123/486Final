@@ -58,4 +58,6 @@ def main(amountTrain):
     collect(int(amountTrain))
 
 if __name__ == '__main__':
+    #RUN WITHIN VIRTUAL ENVIRONMENT PIP INSTALL praw
+    #RUN COMMAND IS: Python3 trainScraper.py <amount int of data for left and right>
     main(sys.argv[1])
