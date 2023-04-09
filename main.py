@@ -4,10 +4,10 @@ import os
 import praw
 
 reddit = praw.Reddit(
-    client_id='your_client_id',
-    client_secret='your_client_secret',
+    client_id='6wqQI91lq4Vp2YTxGl5JFw',
+    client_secret='AfSw590WsCIQRgI5zZVM2p_ivPs6Sg',
     redirect_uri='http://localhost:8000',
-    user_agent='your_user_agent'
+    user_agent='486Final v1.0 - This app scrapes Reddit for data on a specific topic.'
 )
 
 #total number of posts in the liberal and conservative categories (change to command line arguement later, potentially)
