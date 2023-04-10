@@ -13,7 +13,7 @@ labels = df['label'].tolist()
 tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
 
 # Tokenize the original data
-tokenized_data = tokenizer(dataset["sentence"], return_tensors="pt", padding=True)
+tokenized_data = tokenizer(texts, return_tensors="pt", padding=True)
 
 # Tokenize the new data
 encodings = tokenizer(texts, truncation=True, padding=True)
@@ -26,15 +26,15 @@ class MyDataset(Dataset):
 
     def __getitem__(self, idx):
         item = {key: torch.tensor(val[idx]) for key, val in self.encodings.items()}
-        item['labels'] = torch.tensor(self.labels[idx])
+        item['labels'] = torch.tensor(int(self.labels[idx]))
         return item
 
     def __len__(self):
         return len(self.labels)
 
 # Combine the original and new datasets
-combined_dataset = torch.utils.data.ConcatDataset([dataset, MyDataset(encodings, labels)])
-
+#combined_dataset = torch.utils.data.ConcatDataset([df, MyDataset(encodings, labels)])
+combined_dataset = torch.utils.data.ConcatDataset([MyDataset(tokenized_data, labels), MyDataset(encodings, labels)])
 # Create a DataLoader to load the combined data in batches
 dataloader = DataLoader(combined_dataset, batch_size=16, shuffle=True)
 
@@ -60,7 +60,7 @@ training_args = TrainingArguments(
 trainer = Trainer(
     model=model,
     args=training_args,
-    train_dataset=dataloader,
+    train_dataset=combined_dataset,
 )
 
 # Train the model on the combined data
@@ -70,8 +70,9 @@ trainer.train()
 model.eval()
 
 # Test the model on a sample input
-text = "your text here"
+text = "sleepy joe"
 inputs = tokenizer(text, return_tensors="pt", padding=True)
+inputs = {k: v.to('cuda:0') for k, v in inputs.items()} # Move inputs to the same device as model
 outputs = model(**inputs)
 logits = outputs.logits
 

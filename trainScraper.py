@@ -34,7 +34,7 @@ def collect(amountTrain):
                 if hasattr(post, 'selftext') and post.selftext != "":
                     text += '\n' + post.selftext
                 # Write row to CSV file
-                combined_writer.writerow([text, 'left'])
+                combined_writer.writerow([text, '0']) #left
 
         # Loop through Right communities and download to trainingData directory
         for Rcommunity in communities_right:
@@ -44,7 +44,7 @@ def collect(amountTrain):
                 if hasattr(post, 'selftext') and post.selftext != "":
                     text += '\n' + post.selftext
                 # Write row to CSV file
-                combined_writer.writerow([text, 'right'])
+                combined_writer.writerow([text, '2']) # right
 
 def main(amountTrain):
     """Main Function."""
