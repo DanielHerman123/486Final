@@ -2,6 +2,10 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trai
 import torch
 from torch.utils.data import Dataset, DataLoader
 import pandas as pd
+import os
+
+
+
 
 # Load the CSV file into a pandas DataFrame
 df = pd.read_csv('trainingData/training_data.csv')
@@ -10,13 +14,13 @@ df = pd.read_csv('trainingData/training_data.csv')
 texts = df['text'].tolist()
 labels = df['label'].tolist()
 
-tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
+tokenizer = AutoTokenizer.from_pretrained("bert-base-cased", max_length=512)
 
 # Tokenize the original data
-tokenized_data = tokenizer(texts, return_tensors="pt", padding=True)
+tokenized_data = tokenizer(texts, truncation=True, max_length=512, return_tensors="pt", padding=True)
 
 # Tokenize the new data
-encodings = tokenizer(texts, truncation=True, padding=True)
+encodings = tokenizer(texts, truncation=True, padding=True, return_tensors='pt')
 
 # Create a PyTorch Dataset from the encodings and labels
 class MyDataset(Dataset):
@@ -33,10 +37,11 @@ class MyDataset(Dataset):
         return len(self.labels)
 
 # Combine the original and new datasets
-#combined_dataset = torch.utils.data.ConcatDataset([df, MyDataset(encodings, labels)])
 combined_dataset = torch.utils.data.ConcatDataset([MyDataset(tokenized_data, labels), MyDataset(encodings, labels)])
+
 # Create a DataLoader to load the combined data in batches
-dataloader = DataLoader(combined_dataset, batch_size=16, shuffle=True)
+batch_size = 4
+dataloader = DataLoader(combined_dataset, batch_size=batch_size, shuffle=True)
 
 # Load the pre-trained model
 model = AutoModelForSequenceClassification.from_pretrained("bucketresearch/politicalBiasBERT")
@@ -48,12 +53,14 @@ model.train()
 training_args = TrainingArguments(
     output_dir='./results',
     num_train_epochs=3,
-    per_device_train_batch_size=16,
-    per_device_eval_batch_size=64,
+    per_device_train_batch_size=batch_size,
+    per_device_eval_batch_size=batch_size,
     warmup_steps=500,
     weight_decay=0.01,
     logging_dir='./logs',
     logging_steps=10,
+    max_grad_norm=1.0, # set max_grad_norm to a smaller value
+    gradient_accumulation_steps=4, # accumulate gradients over 4 batches
 )
 
 # Set up the trainer
@@ -80,7 +87,6 @@ logits = outputs.logits
 # [1] -> center
 # [2] -> right
 print(logits)
-
 
 # https://huggingface.co/bucketresearch/politicalBiasBERT
 # https://huggingface.co/docs/transformers/training
