@@ -42,7 +42,7 @@ def collect(amountTrain):
             for post in subreddit.new(limit=amountTrain):
                 text = post.title
                 if hasattr(post, 'selftext') and post.selftext != "":
-                    text += ' ' + post.selftext
+                    text += '\n' + post.selftext
                 # Write row to CSV file
                 combined_writer.writerow([text, '2']) # right
 
