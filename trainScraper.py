@@ -16,8 +16,8 @@ def collect(amountTrain):
     """collect reddit posts"""
 
     # make call to api with provided communities
-    communities_left = ['Democrats']    # should include more
-    communities_right = ['Republican']
+    communities_left = ['Democrats', 'Liberal']    # should include more
+    communities_right = ['Republican', 'Conservative']
 
     # Prepare a CSV file for the combined data
     with open('trainingData/training_data.csv', mode='w', newline='', encoding='utf-8') as combined_file:
@@ -42,7 +42,7 @@ def collect(amountTrain):
             for post in subreddit.new(limit=amountTrain):
                 text = post.title
                 if hasattr(post, 'selftext') and post.selftext != "":
-                    text += '\n' + post.selftext
+                    text += ' ' + post.selftext
                 # Write row to CSV file
                 combined_writer.writerow([text, '2']) # right
 
