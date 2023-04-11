@@ -5,7 +5,7 @@ import pandas as pd
 import os
 
 
-testDir = 'testingData'
+testDir = 'testingData/'
 
 # Load the CSV file into a pandas DataFrame
 df = pd.read_csv('trainingData/training_data.csv')
@@ -80,10 +80,9 @@ model.eval()
 for file in os.listdir(testDir):
 
     count_left = 0
-    count_center = 0
     count_right = 0
     
-    f = open(file, 'r')
+    f = open(testDir + file, 'r')
 
     for post in f.readlines():
         # Test the model on a sample input
@@ -100,16 +99,15 @@ for file in os.listdir(testDir):
         if prediction == 0:
             print("Liberal.")
             count_left += 1
-        elif prediction == 1:
-            print("Centrist.")
-            count_center += 1
         else:
             print("Conservative.")
             count_right += 1
 
-    total = count_left + count_center + count_right
-    print(file[:-4], ": Left[", count_left/total, "%] Right[", count_right/count_center, "%] Center[", count_center/total, "%]")
-
+    total = count_left + count_right
+    print(file[:-4], ": Left[", count_left/total, "%] Right[", count_right/total, "%]")
+    output_file = os.path.join('results', f"{file[:-4]}.answer")
+    with open(output_file, 'w') as f:
+        f.write("Left[" + str(count_left/total) + "%] Right[" + str(count_right/total) + "%]")
         
 
 
