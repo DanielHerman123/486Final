@@ -27,7 +27,7 @@ def collect(amountTrain, community):
                 text += ' ' + post.selftext
             # Write row to .txt file
             text = re.sub(r"\n", " ", text)
-            f.writelines(text)
+            f.writelines(text + "\n")
             
             
 
