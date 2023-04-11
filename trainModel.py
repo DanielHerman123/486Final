@@ -76,17 +76,36 @@ trainer.train()
 # Set the model to evaluation mode
 model.eval()
 
-# Test the model on a sample input
-text = "sleepy joe"
-inputs = tokenizer(text, return_tensors="pt", padding=True)
-inputs = {k: v.to('cuda:0') for k, v in inputs.items()} # Move inputs to the same device as model
-outputs = model(**inputs)
-logits = outputs.logits
 
-# [0] -> left 
-# [1] -> center
-# [2] -> right
-print(logits)
+while True:
+    user_input = input("Enter a Sentence to classify: ")
+    # do something with user_input
+
+    # Test the model on a sample input
+    inputs = tokenizer(user_input, return_tensors="pt", padding=True)
+    inputs = {k: v.to('cuda:0') for k, v in inputs.items()} # Move inputs to the same device as model
+    outputs = model(**inputs)
+    logits = outputs.logits
+
+    # [0] -> left 
+    # [1] -> center
+    # [2] -> right
+    count_left = 0
+    count_center = 0
+    count_right = 0
+
+    prediction = logits.argmax().item()
+    if prediction == 0:
+        print("Liberal.")
+        count_left += 1
+    elif prediction == 1:
+        print("Centrist.")
+        count_center += 1
+    else:
+        print("Conservative.")
+        count_right += 1
+
+# TODO create an accuracy checker for the code
 
 # https://huggingface.co/bucketresearch/politicalBiasBERT
 # https://huggingface.co/docs/transformers/training
