@@ -20,7 +20,7 @@ def collect(amountTrain, community):
 
     # download to testing data directory
     subreddit = reddit.subreddit(community)
-    with open('testingData/{community}.txt', mode='w') as f:
+    with open(f'testingData/{community}.txt', mode='w') as f:
         for post in subreddit.new(limit=amountTrain):
             text = post.title
             if hasattr(post, 'selftext') and post.selftext != "":
@@ -40,7 +40,7 @@ def main(amountTrain, community):
     if not os.path.exists('testingData'):
         os.mkdir('testingData')
 
-    collect(int(amountTrain, community))
+    collect(int(amountTrain), community)
 
 if __name__ == '__main__':
     #RUN WITHIN VIRTUAL ENVIRONMENT PIP INSTALL praw
