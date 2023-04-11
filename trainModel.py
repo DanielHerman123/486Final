@@ -86,6 +86,7 @@ for file in os.listdir(testDir):
 
     for post in f.readlines():
         # Test the model on a sample input
+        post = post[:512]
         inputs = tokenizer(post, return_tensors="pt", padding=True)
         inputs = {k: v.to('cuda:0') for k, v in inputs.items()} # Move inputs to the same device as model
         outputs = model(**inputs)
@@ -97,17 +98,17 @@ for file in os.listdir(testDir):
 
         prediction = logits.argmax().item()
         if prediction == 0:
-            print("Liberal.")
             count_left += 1
         else:
-            print("Conservative.")
             count_right += 1
 
     total = count_left + count_right
-    print(file[:-4], ": Left[", count_left/total, "%] Right[", count_right/total, "%]")
+    rightPercent = count_right/total * 100
+    leftPercent = count_left/total * 100
+    print(file[:-4], ": Left[", leftPercent, "%] Right[", rightPercent, "%]")
     output_file = os.path.join('results', f"{file[:-4]}.answer")
     with open(output_file, 'w') as f:
-        f.write("Left[" + str(count_left/total) + "%] Right[" + str(count_right/total) + "%]")
+        f.write(f"Left[{leftPercent}%] Right[{rightPercent}%]")
         
 
 
