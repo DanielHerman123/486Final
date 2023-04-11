@@ -5,7 +5,7 @@ import pandas as pd
 import os
 
 
-
+testDir = 'testingData'
 
 # Load the CSV file into a pandas DataFrame
 df = pd.read_csv('trainingData/training_data.csv')
@@ -77,33 +77,74 @@ trainer.train()
 model.eval()
 
 
-while True:
-    user_input = input("Enter a Sentence to classify: ")
-    # do something with user_input
+for file in os.listdir(testDir):
 
-    # Test the model on a sample input
-    inputs = tokenizer(user_input, return_tensors="pt", padding=True)
-    inputs = {k: v.to('cuda:0') for k, v in inputs.items()} # Move inputs to the same device as model
-    outputs = model(**inputs)
-    logits = outputs.logits
-
-    # [0] -> left 
-    # [1] -> center
-    # [2] -> right
     count_left = 0
     count_center = 0
     count_right = 0
+    
+    f = open(file, 'r')
 
-    prediction = logits.argmax().item()
-    if prediction == 0:
-        print("Liberal.")
-        count_left += 1
-    elif prediction == 1:
-        print("Centrist.")
-        count_center += 1
-    else:
-        print("Conservative.")
-        count_right += 1
+    for post in f.readlines():
+        # Test the model on a sample input
+        inputs = tokenizer(post, return_tensors="pt", padding=True)
+        inputs = {k: v.to('cuda:0') for k, v in inputs.items()} # Move inputs to the same device as model
+        outputs = model(**inputs)
+        logits = outputs.logits
+
+        # [0] -> left 
+        # [1] -> center
+        # [2] -> right
+
+        prediction = logits.argmax().item()
+        if prediction == 0:
+            print("Liberal.")
+            count_left += 1
+        elif prediction == 1:
+            print("Centrist.")
+            count_center += 1
+        else:
+            print("Conservative.")
+            count_right += 1
+
+    total = count_left + count_center + count_right
+    print(file[:-4], ": Left[", count_left/total, "%] Right[", count_right/count_center, "%] Center[", count_center/total, "%]")
+
+        
+
+
+
+
+
+
+# FOR DEMO
+# while True:
+#     user_input = input("Enter a Sentence to classify: ")
+#     # do something with user_input
+
+#     # Test the model on a sample input
+#     inputs = tokenizer(user_input, return_tensors="pt", padding=True)
+#     inputs = {k: v.to('cuda:0') for k, v in inputs.items()} # Move inputs to the same device as model
+#     outputs = model(**inputs)
+#     logits = outputs.logits
+
+#     # [0] -> left 
+#     # [1] -> center
+#     # [2] -> right
+#     count_left = 0
+#     count_center = 0
+#     count_right = 0
+
+#     prediction = logits.argmax().item()
+#     if prediction == 0:
+#         print("Liberal.")
+#         count_left += 1
+#     elif prediction == 1:
+#         print("Centrist.")
+#         count_center += 1
+#     else:
+#         print("Conservative.")
+#         count_right += 1
 
 # TODO create an accuracy checker for the code
 
